@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transactions</title>
+</head>
+<body>
+
+<h1>Transactions</h1>
+
+<a href="/transactions/downloadPDF">Download PDF</a>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>User ID</th>
+        <th>Product ID</th>
+        <th>Quantity</th>
+        <th>Total Price</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    <?php foreach ($transactions as $transaction): ?>
+        <tr>
+            <td><?= $transaction['id'] ?></td>
+            <td><?= $transaction['user_id'] ?></td>
+            <td><?= $transaction['product_id'] ?></td>
+            <td><?= $transaction['quantity'] ?></td>
+            <td><?= $transaction['total_price'] ?></td>
+            <td><?= $transaction['status'] == 1 ? 'Completed' : 'Pending' ?></td>
+            <td>
+                <form action="/transactions/updateStatus/<?= $transaction['id'] ?>" method="post">
+                    <?= csrf_field() ?>
+                    <button type="submit"><?= $transaction['status'] == 1 ? 'Mark as Pending' : 'Mark as Completed' ?></button>
+                </form>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+
+</body>
+</html>

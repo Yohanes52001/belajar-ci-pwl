@@ -25,6 +25,8 @@ class ProdukController extends BaseController
 
     public function create()
     {
+        helper(['form']);
+
         $dataFoto = $this->request->getFile('foto');
 
         $dataForm = [
@@ -34,11 +36,39 @@ class ProdukController extends BaseController
             'created_at' => date("Y-m-d H:i:s")
         ];
 
+        // Rules for validation
+        $rules = [
+            'nama' => 'required|min_length[5]',
+            'harga' => 'required|numeric',
+            'jumlah' => 'required|numeric'
+        ];
+
         if ($dataFoto->isValid()) {
             $fileName = $dataFoto->getRandomName();
             $dataForm['foto'] = $fileName;
             $dataFoto->move('img/', $fileName);
         }
+
+        if ($this->request->getMethod() == 'post') {
+            // Validating the form input
+            if (!$this->validate($rules)) {
+                // If validation fails, show the form again with errors
+                return view('v_produk', [
+                    'validation' => $this->validator
+                ]);
+            } else {
+                // If validation succeeds, proceed with form processing
+                $model = new ProductModel();
+
+                $data = [
+                    'nama' => $this->request->getPost('nama'),
+                    'harga' => $this->request->getPost('harga'),
+                    'jumlah' => $this->request->getPost('jumlah')
+                ];
+            }
+        }
+
+        $model->save($data);
 
         $this->product->insert($dataForm);
 
@@ -89,26 +119,26 @@ class ProdukController extends BaseController
     }
 
     public function download()
-{
-    $product = $this->product->findAll();
+    {
+        $product = $this->product->findAll();
 
-    $html = view('v_produkPDF', ['product' => $product]);
+        $html = view('v_produkPDF', ['product' => $product]);
 
-    $filename = date('y-m-d-H-i-s') . '-produk';
+        $filename = date('y-m-d-H-i-s') . '-produk';
 
-    // instantiate and use the dompdf class
-    $dompdf = new Dompdf();
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
 
-    // load HTML content
-    $dompdf->loadHtml($html);
+        // load HTML content
+        $dompdf->loadHtml($html);
 
-    // (optional) setup the paper size and orientation
-    $dompdf->setPaper('A4', 'potrait');
+        // (optional) setup the paper size and orientation
+        $dompdf->setPaper('A4', 'potrait');
 
-    // render html as PDF
-    $dompdf->render();
+        // render html as PDF
+        $dompdf->render();
 
-    // output the generated pdf
-    $dompdf->stream($filename);
-}
+        // output the generated pdf
+        $dompdf->stream($filename);
+    }
 }
