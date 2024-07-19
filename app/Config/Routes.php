@@ -41,7 +41,7 @@ $routes->group('api', function ($routes) {
     $routes->post('monthly', 'ApiController::monthly');
 });
 
-$routes->get('/transactions', 'TransactionController::index');
-$routes->post('/transactions/updateStatus/(:num)', 'TransactionController::updateStatus/$1');
-$routes->get('/transactions/downloadPDF', 'TransactionController::downloadPDF');
-$routes->get('/transactions/annualReport', 'TransactionController::annualReport');
+$routes->get('/transactions', 'TransaksiController::index');
+$routes->post('/transactions/updateStatus/(:num)', 'TransaksiController::updateStatus/$1');
+$routes->get('/transactions/downloadPDF', 'TransaksiController::downloadPDF');
+$routes->get('/transactions/annualReport', 'TransaksiController::annualReport');
